@@ -75,7 +75,6 @@ def run_notebook(ntbk, max_output_lines=1000):
     """
     if isinstance(ntbk, str):
         run_path = os.path.dirname(ntbk)
-        print(run_path)
 
     ntbk = _check_nb_file(ntbk)
     preprocessors = [Execute()]
