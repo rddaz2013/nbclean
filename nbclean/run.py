@@ -58,7 +58,7 @@ def run_notebook_directory(path, path_save=None, max_output_lines=1000,
         for filename, notebook in zip(notebooks, outputs):
             this_name = op.basename(filename)
             left, right = this_name.split('.')
-            left += '-exe'
+            left += ''
             this_name = '.'.join([left, right])
             nbf.write(notebook, op.join(path_save, this_name))
 
@@ -73,11 +73,18 @@ def run_notebook(ntbk, max_output_lines=1000):
     max_output_lines : int | None
         The maximum number of lines allowed in notebook outputs.
     """
-    ntbk = _check_nb_file(ntbk)
+    if isinstance(ntbk, str):
+        run_path = os.path.dirname(ntbk)
+        print(run_path)
 
+    ntbk = _check_nb_file(ntbk)
     preprocessors = [Execute()]
     if max_output_lines is not None:
         preprocessors.append(LimitOutput(max_lines=max_output_lines,
+                                         max_traceback=max_output_lines))
+    for prep in preprocessors:
+        ntbk, _ = prep.preprocess(ntbk, {'metadata': {'path': run_path}})
+    return ntbk
                                          max_traceback=max_output_lines))
     for prep in preprocessors:
         ntbk, _ = prep.preprocess(ntbk, {})
